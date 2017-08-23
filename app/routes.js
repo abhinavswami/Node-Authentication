@@ -1,17 +1,19 @@
 // app/routes.js
-module.exports = function(app, passport){
+module.exports = function(app, passport) {
 
   // HOME PAGE with login links
-  app.get('/', function(req, res){
+  app.get('/', function(req, res) {
     // res.send("Welcome to homepage");
-    res.render('index.ejs');  // load the index.ejs file
+    res.render('index.ejs'); // load the index.ejs file
   });
 
   // LOGIN page
-  app.get('/login', function(req,res) {
+  app.get('/login', function(req, res) {
 
     // render the page and pass in any flash data if exists
-    res.render('login.ejs', { message : req.flash('loginMessage')});
+    res.render('login.ejs', {
+      message: req.flash('loginMessage')
+    });
   });
 
   // process the login form
@@ -19,11 +21,19 @@ module.exports = function(app, passport){
 
 
   // SIGNUP page - show the sign up forms
-  app.get('/signup', function(req, res){
+  app.get('/signup', function(req, res) {
 
     // render the page and pas in any flash datya if any
-    res.render('signup.ejs', {message : req.flash('signupMessage') });
+    res.render('signup.ejs', {
+      message: req.flash('signupMessage')
+    });
   });
+
+  app.post('/signup', passport.authenticate('local-signup', {
+    successRedirect: '/profile',
+    failureRedirect: '/signup',
+    failureFlash: true
+  }));
 
   // process the signup forms
   // app.post('/signup', do all our passport stuff here);
@@ -32,22 +42,22 @@ module.exports = function(app, passport){
   // we will want this to be protected so you have to be logged in to visit
   // we will use router middleware to verify this (the isLoggedIn function)
 
-  app.get('/profile', isLoggedIn, function(req,res){
+  app.get('/profile', isLoggedIn, function(req, res) {
     res.render('profile.ejs', {
-      user : req.user   // get the user out of sesion and pass to template
+      user: req.user // get the user out of sesion and pass to template
     });
   });
 
-  app.get('/logout', function(req,res){
+  app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
   });
 };
 
-function isLoggedIn(req,res,next){
+function isLoggedIn(req, res, next) {
 
   // if user is authenticated in the session, carry on
-  if(req.isAuthenticated())
+  if (req.isAuthenticated())
     return next();
 
   // if they aren't redirect them to the home page
