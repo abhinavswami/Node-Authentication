@@ -16,6 +16,12 @@ module.exports = function(app, passport) {
     });
   });
 
+  app.post('/login', passport.authenticate('local-login', {
+    successRedirect: '/profile', // redirect to the secure profile SECTION
+    failureRedirect: '/login', // redirect back to the login page if there is error
+    failureFlash: true
+  }));
+
   // process the login form
   // app.post('/login', do all our passport stuff here);
 
